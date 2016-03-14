@@ -27,12 +27,11 @@ class Calendar extends React.Component {
     // })
     // return this.renderSingleMonthCalendar(targetMonth)
     return (
+      // this.renderSingleMonthCalendar(targetMonth)
       <ViewPager
         style={styles.viewPager}
         dataSource = {dataSource.cloneWithPages([1,2])}
-        renderPage={this._renderPage}
-        isLoop={true}
-        autoPlay={true}
+        renderPage={this.renderSingleMonthCalendar.bind(this, targetMonth)}
         />
     )
     // return this.renderSingleMonthCalendar(this.props.monthToDisplay)
@@ -121,15 +120,13 @@ var styles = StyleSheet.create({
   calendarContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    width: width,
-    height: 100,
-    backgroundColor: 'yellow'
+    justifyContent: 'flex-start',
+    alignItems:'flex-start',
+    width: width
+    // height: width
   },
   viewPager: {
     flex: 1,
-    backgroundColor: 'gray',
-    width: 100,
-    height: 100
   },
   dateViewContainer: {
     justifyContent: 'center',
