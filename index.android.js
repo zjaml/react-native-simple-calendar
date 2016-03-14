@@ -11,16 +11,32 @@ import React, {
   Text,
   View
 } from 'react-native';
-
+import moment from 'moment'
 import Calendar from "./src/Calendar";
 
 class simpleCalendar extends Component {
+  constructor(props){
+    super(props)
+    this.state = {
+      selectedDate: moment().format('YYYY-MM-DD')
+    }
+  }
+
   render() {
+    console.log('render method called on index.android')
     return (
       <View style={styles.container}>
-        <Calendar/>
+        <Calendar dateSelected={this.dateSelected.bind(this)}
+          selectedDate = {this.state.selectedDate}/>
+        <Text>{this.state.selectedDate}</Text>
       </View>
     )
+  }
+
+  dateSelected(date){
+    this.setState({
+      selectedDate: date
+    })
   }
 }
 
