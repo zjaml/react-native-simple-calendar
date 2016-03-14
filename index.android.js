@@ -25,9 +25,10 @@ class simpleCalendar extends Component {
     // console.log('render method called on index.android')
     return (
       <View style={styles.container}>
-        <Calendar dateSelected={this.dateSelected.bind(this)}
+        <Calendar style={styles.calendar}
+          dateSelected={this.dateSelected.bind(this)}
           selectedDate = {this.state.selectedDate}/>
-        <Text>{this.state.selectedDate}</Text>
+          <View style= {styles.list}></View>
       </View>
     )
   }
@@ -42,8 +43,16 @@ class simpleCalendar extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: 'stretch',
+    flexDirection: 'column',
     justifyContent: 'flex-start',
     backgroundColor: '#F5FCFF',
+  },
+  calendar: {
+    flex: 2
+  },
+  list: {
+    flex: 1
   },
   welcome: {
     fontSize: 20,
