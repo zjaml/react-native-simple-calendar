@@ -3,7 +3,8 @@ import React, {
   StyleSheet,
   Text,
   Dimensions,
-  TouchableOpacity
+  TouchableOpacity,
+  ViewPagerAndroid,
 } from 'react-native'
 import Constants from './constants'
 import moment from 'moment'
@@ -14,10 +15,40 @@ const {width} = Dimensions.get('window')
 class Calendar extends React.Component {
   render() {
     console.log(moment.weekdaysMin())
-    let baseDate = moment(this.props.monthToDisplay, Constants.MONTH_FORMAT)
+    const targetMonth = moment(this.props.monthToDisplay, Constants.MONTH_FORMAT)
+    const prevMonth = moment(targetMonth).subtract(1, 'months')
+    const nextMonth = moment(targetMonth).add(1, 'months')
+    const monthViews = [prevMonth, targetMonth, nextMonth].map(month => {
+      return this.renderSingleMonthCalendar(month)
+    })
+    // return this.renderSingleMonthCalendar(targetMonth)
+    return (
+      <ViewPagerAndroid
+        style={styles.viewPager}
+        initialPage={0}>
+        <View style={styles.pageStyle}>
+          <Text>First page</Text>
+        </View>
+        <View style={styles.pageStyle}>
+          <Text>Second page</Text>
+        </View>
+      </ViewPagerAndroid>
+    )
+    return (
+      <ViewPagerAndroid initialPage={1} style={{flex: 1, justifyContent: 'center',
+        alignItems: 'strecth'
+      }}>
+        <View/><View/><View/>
+      </ViewPagerAndroid>
+    )
+    // return this.renderSingleMonthCalendar(this.props.monthToDisplay)
+  }
+
+  renderSingleMonthCalendar(month){
+    let baseDate = month
     const numberOfDays = moment(baseDate).endOf('month').date()
-    const dayOfWeekOn1st = baseDate.day()
-    console.log(`numberOfDays ${numberOfDays} dayOfWeekOn1st ${dayOfWeekOn1st}`)
+    const dayOfWeekOn1st = baseDate.startOf('month').day()
+    // console.log(`numberOfDays ${numberOfDays} dayOfWeekOn1st ${dayOfWeekOn1st}`)
     let dateViews = []
     //add fillers befor 1st.
     for(i = 0; i < dayOfWeekOn1st; i++){
@@ -34,7 +65,7 @@ class Calendar extends React.Component {
     }
 
     return (
-      <View style={styles.calendarContainer}>
+      <View key={month.format(Constants.MONTH_FORMAT)} style={styles.calendarContainer}>
         {dateViews}
       </View>
     )
@@ -91,6 +122,9 @@ var styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     width: width
+  },
+  viewPager: {
+    flex: 1,
   },
   dateViewContainer: {
     justifyContent: 'center',

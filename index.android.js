@@ -22,7 +22,7 @@ class simpleCalendar extends Component {
   }
 
   render() {
-    console.log('render method called on index.android')
+    // console.log('render method called on index.android')
     return (
       <View style={styles.container}>
         <Calendar dateSelected={this.dateSelected.bind(this)}
