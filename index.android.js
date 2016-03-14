@@ -12,8 +12,7 @@ import React, {
   View
 } from 'react-native';
 import moment from 'moment'
-import Calendar from "./src/Calendar";
-
+import Calendar from "./Calendar";
 class simpleCalendar extends Component {
   constructor(props){
     super(props)
