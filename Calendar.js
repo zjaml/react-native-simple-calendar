@@ -9,8 +9,12 @@ import React, {
 import Constants from './constants'
 import moment from 'moment'
 import jaLocal from 'moment/locale/ja' //import this will cause the moment use ja locale
-
+import ViewPager from 'react-native-viewpager'
 const {width} = Dimensions.get('window')
+
+var dataSource = new ViewPager.DataSource({
+  pageHasChanged: (p1, p2) => p1 !== p2,
+});
 
 class Calendar extends React.Component {
   render() {
@@ -18,33 +22,29 @@ class Calendar extends React.Component {
     const targetMonth = moment(this.props.monthToDisplay, Constants.MONTH_FORMAT)
     const prevMonth = moment(targetMonth).subtract(1, 'months')
     const nextMonth = moment(targetMonth).add(1, 'months')
-    const monthViews = [prevMonth, targetMonth, nextMonth].map(month => {
-      return this.renderSingleMonthCalendar(month)
-    })
+    // const monthViews = [prevMonth, targetMonth, nextMonth].map(month => {
+    //   return this.renderSingleMonthCalendar(month)
+    // })
     // return this.renderSingleMonthCalendar(targetMonth)
     return (
-      <ViewPagerAndroid
+      <ViewPager
         style={styles.viewPager}
-        initialPage={0}>
-        <View style={styles.pageStyle}>
-          <Text>First page</Text>
-        </View>
-        <View style={styles.pageStyle}>
-          <Text>Second page</Text>
-        </View>
-      </ViewPagerAndroid>
-    )
-    return (
-      <ViewPagerAndroid initialPage={1} style={{flex: 1, justifyContent: 'center',
-        alignItems: 'strecth'
-      }}>
-        <View/><View/><View/>
-      </ViewPagerAndroid>
+        dataSource = {dataSource.cloneWithPages([1,2])}
+        renderPage={this._renderPage}
+        isLoop={true}
+        autoPlay={true}
+        />
     )
     // return this.renderSingleMonthCalendar(this.props.monthToDisplay)
   }
 
+  _renderPage(index){
+    console.log(`renderPage:${index}`)
+    return <View style={{flex:1, backgroundColor:'green'}}></View>
+  }
+
   renderSingleMonthCalendar(month){
+    console.log('render called')
     let baseDate = month
     const numberOfDays = moment(baseDate).endOf('month').date()
     const dayOfWeekOn1st = baseDate.startOf('month').day()
@@ -121,10 +121,15 @@ var styles = StyleSheet.create({
   calendarContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    width: width
+    width: width,
+    height: 100,
+    backgroundColor: 'yellow'
   },
   viewPager: {
     flex: 1,
+    backgroundColor: 'gray',
+    width: 100,
+    height: 100
   },
   dateViewContainer: {
     justifyContent: 'center',
