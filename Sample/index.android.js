@@ -13,7 +13,8 @@ import React, {
 } from 'react-native';
 import moment from 'moment'
 import LayoutTest from "./LayoutTest"
-import Calendar from "./Calendar";
+import Calendar from "react-native-simple-calendar";
+
 class simpleCalendar extends Component {
   constructor(props){
     super(props)
@@ -68,4 +69,4 @@ const styles = StyleSheet.create({
   },
 });
 
-AppRegistry.registerComponent('simpleCalendar', () => simpleCalendar);
+AppRegistry.registerComponent('Sample', () => simpleCalendar);

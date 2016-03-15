@@ -49,4 +49,4 @@ const styles = StyleSheet.create({
   },
 });
 
-AppRegistry.registerComponent('simpleCalendar', () => simpleCalendar);
+AppRegistry.registerComponent('Sample', () => simpleCalendar);

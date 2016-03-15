@@ -11,8 +11,6 @@ import React, {
 
 class LayoutTest extends Component {
   render(){
-
-
     return (
       <View style= {{backgroundColor: 'green', }}>
         <View style={styles.parent}>

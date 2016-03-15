@@ -42,7 +42,7 @@
 //   jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
-                                                      moduleName:@"simpleCalendar"
+                                                      moduleName:@"Sample"
                                                initialProperties:nil
                                                    launchOptions:launchOptions];
 
