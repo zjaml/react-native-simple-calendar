@@ -13,7 +13,10 @@ import ViewPager from 'react-native-viewpager'
 const {width} = Dimensions.get('window')
 
 var dataSource = new ViewPager.DataSource({
-  pageHasChanged: (p1, p2) => p1 !== p2,
+  pageHasChanged: (p1, p2) => {
+    console.log(`p1: ${p1} p2: ${p2}`)
+    return p1 !== p2
+  }
 });
 
 class Calendar extends React.Component {
@@ -22,26 +25,29 @@ class Calendar extends React.Component {
     const targetMonth = moment(this.props.monthToDisplay, Constants.MONTH_FORMAT)
     const prevMonth = moment(targetMonth).subtract(1, 'months')
     const nextMonth = moment(targetMonth).add(1, 'months')
-    return (
-
-      // renderPage={this.renderSingleMonthCalendar.bind(this, targetMonth)}
-      <ViewPager style= {[ styles.viewPager,this.props.style]}
-        dataSource = {dataSource.cloneWithPages([1,2])}
-        renderPage = {() => <View style={{flex: 1}} />}
-        renderPageIndicator = {false}
-        />
-    )
+    // return this.renderSingleMonthCalendar(targetMonth)
+    let monthsToRender = []
+    for(let i = -60; i <= 60; i ++){
+      monthsToRender.push(i)
+    }
+    return <ViewPager style= {[ styles.viewPager,this.props.style]}
+      dataSource = {dataSource.cloneWithPages(monthsToRender)}
+      renderPage = {this.renderSingleMonthCalendar.bind(this)}
+      renderPageIndicator = {false}
+      initialPage = {0}
+      />
   }
 
-  renderSingleMonthCalendar(month){
-    console.log('render called')
-    let baseDate = month
+  renderSingleMonthCalendar(offset, page){
+    console.log(`offset ${offset} page${page}`)
+    let baseDate = moment().add(offset, 'months')
     const numberOfDays = moment(baseDate).endOf('month').date()
     const dayOfWeekOn1st = baseDate.startOf('month').day()
     // console.log(`numberOfDays ${numberOfDays} dayOfWeekOn1st ${dayOfWeekOn1st}`)
     let headingViews = moment.weekdaysMin().map((weekDay, index) =>
         <View style={styles.heading} key={`h:${index}`}><Text>{weekDay}</Text></View>)
     let dateViews = []
+    //add month title
     //add headings
     //add fillers befor 1st.
     for(i = 0; i < dayOfWeekOn1st; i++){
@@ -58,10 +64,13 @@ class Calendar extends React.Component {
     }
 
     return (
-      <View key={month.format(Constants.MONTH_FORMAT)} style={styles.calendarContainer}>
+      <View>
+        <Text>{baseDate.format(Constants.MONTH_FORMAT)}</Text>
+      <View key={baseDate.format(Constants.MONTH_FORMAT)} style={styles.calendarContainer}>
         {headingViews}
         {dateViews}
       </View>
+    </View>
     )
   }
 
@@ -118,7 +127,7 @@ var styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems:'flex-start',
     width: width,
-    backgroundColor:'yellow',
+    backgroundColor:'#ffffcc',
     // height: width * 5 / 7
   },
   viewPager: {
@@ -126,12 +135,12 @@ var styles = StyleSheet.create({
   },
   heading:{
     width: width / 7 - 1,
-    height: width / 7 - 10,
+    height: 20,
     justifyContent: 'center',
     alignItems: 'center',
   },
   dateViewContainer: {
-    backgroundColor: 'gray',
+    // backgroundColor: '#ffe6cc',
     justifyContent: 'center',
     alignItems: 'center',
     width: width / 7 - 1,

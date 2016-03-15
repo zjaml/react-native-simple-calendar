@@ -12,6 +12,7 @@ import React, {
   View
 } from 'react-native';
 import moment from 'moment'
+import LayoutTest from "./LayoutTest"
 import Calendar from "./Calendar";
 class simpleCalendar extends Component {
   constructor(props){
@@ -24,12 +25,14 @@ class simpleCalendar extends Component {
   render() {
     // console.log('render method called on index.android')
     return (
+      // <LayoutTest></LayoutTest>
       <View style={styles.container}>
         <Calendar style={styles.calendar}
           dateSelected={this.dateSelected.bind(this)}
           selectedDate = {this.state.selectedDate}/>
           <View style= {styles.list}></View>
       </View>
+      // <MainScreen></MainScreen>
     )
   }
 
@@ -43,13 +46,10 @@ class simpleCalendar extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'stretch',
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
     backgroundColor: '#F5FCFF',
   },
   calendar: {
-    flex: 2
+    // flex:2
   },
   list: {
     flex: 1
