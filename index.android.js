@@ -29,6 +29,7 @@ class simpleCalendar extends Component {
       <View style={styles.container}>
         <Calendar style={styles.calendar}
           dateSelected={this.dateSelected.bind(this)}
+          eventDates = {['2016-03-18', '2016-04-19']}
           selectedDate = {this.state.selectedDate}/>
           <View style= {styles.list}></View>
       </View>
@@ -37,6 +38,7 @@ class simpleCalendar extends Component {
   }
 
   dateSelected(date){
+    console.log(`date selected ${date}`)
     this.setState({
       selectedDate: date
     })

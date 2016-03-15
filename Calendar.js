@@ -30,11 +30,11 @@ class Calendar extends React.Component {
     for(let i = -60; i <= 60; i ++){
       monthsToRender.push(i)
     }
-    return <ViewPager style= {[ styles.viewPager,this.props.style]}
+    return <ViewPager ref='viewPager' style= {[ styles.viewPager,this.props.style]}
       dataSource = {dataSource.cloneWithPages(monthsToRender)}
       renderPage = {this.renderSingleMonthCalendar.bind(this)}
       renderPageIndicator = {false}
-      initialPage = {0}
+      initialPage = {61}
       />
   }
 
@@ -44,11 +44,12 @@ class Calendar extends React.Component {
     const numberOfDays = moment(baseDate).endOf('month').date()
     const dayOfWeekOn1st = baseDate.startOf('month').day()
     // console.log(`numberOfDays ${numberOfDays} dayOfWeekOn1st ${dayOfWeekOn1st}`)
-    let headingViews = moment.weekdaysMin().map((weekDay, index) =>
-        <View style={styles.heading} key={`h:${index}`}><Text>{weekDay}</Text></View>)
-    let dateViews = []
-    //add month title
     //add headings
+    let headingViews = moment.weekdaysMin().map((weekDay, index) =>
+        <View style={styles.heading} key={`h:${index}`}>
+          <Text style={styles.headingText}>{weekDay}</Text>
+        </View>)
+    let dateViews = []
     //add fillers befor 1st.
     for(i = 0; i < dayOfWeekOn1st; i++){
       dateViews.push(<DateView key={-i} selected={false}/>)
@@ -57,6 +58,7 @@ class Calendar extends React.Component {
     for(i = 1; i<= numberOfDays; i++ ){
       let d = moment(baseDate).date(i)
       dateViews.push(<DateView key={i} text={i}
+        isToday = {this.isToday.bind(this, d)()}
         onPress = {this.selectDate.bind(this, d)}
         selected = {this.isDateSelected.bind(this, d)()}
         hasEvent = {this.hasEvent.bind(this,d)()}
@@ -64,9 +66,14 @@ class Calendar extends React.Component {
     }
 
     return (
-      <View>
-        <Text>{baseDate.format(Constants.MONTH_FORMAT)}</Text>
-      <View key={baseDate.format(Constants.MONTH_FORMAT)} style={styles.calendarContainer}>
+      <View style={styles.container}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.titleText}>{baseDate.format(Constants.MONTH_FORMAT_DISPLAY)}</Text>
+          <TouchableOpacity onPress={this.showCurrentMonth.bind(this)} style={styles.thisMonthButton}>
+            <Text>今月</Text>
+          </TouchableOpacity>
+        </View>
+        <View key={baseDate.format(Constants.MONTH_FORMAT)} style={styles.calendarContainer}>
         {headingViews}
         {dateViews}
       </View>
@@ -74,9 +81,18 @@ class Calendar extends React.Component {
     )
   }
 
+  showCurrentMonth(){
+    console.log(this.refs.viewPager)
+    this.refs.viewPager.goToPage(60)
+  }
+
   selectDate(date) {
     if(this.props.dateSelected)
       this.props.dateSelected(date.format(Constants.DATE_FORMAT))
+  }
+
+  isToday(date){
+    return date.format(Constants.DATE_FORMAT) === moment().format(Constants.DATE_FORMAT)
   }
 
   isDateSelected(date){
@@ -106,14 +122,14 @@ Calendar.defaultProps = {
   monthToDisplay: moment().format(Constants.MONTH_FORMAT)
 }
 
-var DateView = ({text, onPress, selected, hasEvent}) =>{
+var DateView = ({text, onPress, selected, hasEvent, isToday}) =>{
   let eventView = null
   if(hasEvent)
     eventView = <View style={styles.point} />
   return (
     <TouchableOpacity onPress={onPress}>
-      <View style={styles.dateViewContainer}>
-        <Text style={selected?styles.selected:null}>{text}</Text>
+      <View style={[styles.dateViewContainer, selected? styles.selected:null]}>
+        <Text style={[styles.dateText,isToday? styles.today:null]}>{text}</Text>
         {eventView}
       </View>
     </TouchableOpacity>
@@ -121,23 +137,51 @@ var DateView = ({text, onPress, selected, hasEvent}) =>{
 }
 
 var styles = StyleSheet.create({
+  container: {
+    alignItems: 'stretch'
+  },
+
   calendarContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'flex-start',
     alignItems:'flex-start',
     width: width,
-    backgroundColor:'#ffffcc',
+    borderWidth: .5,
+    borderColor:'#ddd'
+    // backgroundColor:'#ffffcc',
     // height: width * 5 / 7
   },
   viewPager: {
     // flex: 1
   },
+  titleContainer:{
+    width: width,
+    flexDirection: 'row',
+    alignItems:'center',
+    height: 50,
+    justifyContent: 'center'
+  },
+  titleText: {
+    fontWeight: '500',
+    fontSize: 18
+  },
+  thisMonthButton: {
+    position: 'absolute',
+    right: 10,
+    top: 15
+  },
   heading:{
     width: width / 7 - 1,
-    height: 20,
+    height: 25,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingBottom: 3,
+    borderBottomWidth: .5,
+    borderColor: '#ddd',
+  },
+  headingText: {
+    fontWeight: '500'
   },
   dateViewContainer: {
     // backgroundColor: '#ffe6cc',
@@ -146,8 +190,14 @@ var styles = StyleSheet.create({
     width: width / 7 - 1,
     height: width / 7 - 1,
   },
+  dateText: {
+  },
+  today: {
+    color: 'red',
+  },
   selected:{
-    color: 'red'
+    backgroundColor: '#ffe6cc',
+    borderRadius: (width /7 - 1)/2
   },
   point: {
     position: 'absolute',
