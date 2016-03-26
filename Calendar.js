@@ -25,22 +25,15 @@ class Calendar extends React.Component {
     const targetMonth = moment(this.props.monthToDisplay, Constants.MONTH_FORMAT)
     const prevMonth = moment(targetMonth).subtract(1, 'months')
     const nextMonth = moment(targetMonth).add(1, 'months')
-    // return this.renderSingleMonthCalendar(targetMonth)
-    let monthsToRender = []
-    for(let i = -60; i <= 60; i ++){
-      monthsToRender.push(i)
-    }
     return <ViewPager ref='viewPager' style= {[ styles.viewPager,this.props.style]}
-      dataSource = {dataSource.cloneWithPages(monthsToRender)}
+      dataSource = {dataSource.cloneWithPages([prevMonth, targetMonth, nextMonth])}
       renderPage = {this.renderSingleMonthCalendar.bind(this)}
       renderPageIndicator = {false}
-      initialPage = {61}
+      initialPage = {1}
       />
   }
 
-  renderSingleMonthCalendar(offset, page){
-    console.log(`offset ${offset} page${page}`)
-    let baseDate = moment().add(offset, 'months')
+  renderSingleMonthCalendar(baseDate, page){
     const numberOfDays = moment(baseDate).endOf('month').date()
     const dayOfWeekOn1st = baseDate.startOf('month').day()
     // console.log(`numberOfDays ${numberOfDays} dayOfWeekOn1st ${dayOfWeekOn1st}`)
@@ -51,11 +44,11 @@ class Calendar extends React.Component {
         </View>)
     let dateViews = []
     //add fillers befor 1st.
-    for(i = 0; i < dayOfWeekOn1st; i++){
+    for(let i = 0; i < dayOfWeekOn1st; i++){
       dateViews.push(<DateView key={-i} selected={false}/>)
     }
     //add dates for current month
-    for(i = 1; i<= numberOfDays; i++ ){
+    for(let i = 1; i<= numberOfDays; i++ ){
       let d = moment(baseDate).date(i)
       dateViews.push(<DateView key={i} text={i}
         isToday = {this.isToday.bind(this, d)()}
