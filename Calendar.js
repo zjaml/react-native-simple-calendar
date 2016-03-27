@@ -17,19 +17,26 @@ var dataSource = new ViewPager.DataSource({
     console.log(`p1: ${p1} p2: ${p2}`)
     return p1 !== p2
   }
-});
+})
 
 class Calendar extends React.Component {
   render() {
-    console.log(moment.weekdaysMin())
     const targetMonth = moment(this.props.monthToDisplay, Constants.MONTH_FORMAT)
     const prevMonth = moment(targetMonth).subtract(1, 'months')
     const nextMonth = moment(targetMonth).add(1, 'months')
+    const monthsToRender = [prevMonth,targetMonth,nextMonth]
+    console.log(`calendar render method called with monthsToRender:${monthsToRender}`)
     return <ViewPager ref='viewPager' style= {[ styles.viewPager,this.props.style]}
-      dataSource = {dataSource.cloneWithPages([prevMonth, targetMonth, nextMonth])}
+      dataSource = {dataSource.cloneWithPages(monthsToRender)}
       renderPage = {this.renderSingleMonthCalendar.bind(this)}
+      onChangePage = {
+        pageNum => {
+          console.log(`page changed: ${pageNum} monthsToRender: ${monthsToRender}`)
+          this.props.monthChanged(monthsToRender[pageNum - 1].format(Constants.MONTH_FORMAT))
+        }
+      }
       renderPageIndicator = {false}
-      initialPage = {1}
+      initialPage = {2}
       />
   }
 
@@ -75,8 +82,7 @@ class Calendar extends React.Component {
   }
 
   showCurrentMonth(){
-    console.log(this.refs.viewPager)
-    this.refs.viewPager.goToPage(60)
+    this.refs.viewPager.goToPage(2)
   }
 
   selectDate(date) {
@@ -112,7 +118,8 @@ Calendar.propTypes = {
 Calendar.defaultProps = {
   eventDates: [],
   selectedDate: moment().format(Constants.DATE_FORMAT),
-  monthToDisplay: moment().format(Constants.MONTH_FORMAT)
+  monthToDisplay: moment().format(Constants.MONTH_FORMAT),
+  monthChanged: () => {}
 }
 
 var DateView = ({text, onPress, selected, hasEvent, isToday}) =>{
