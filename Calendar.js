@@ -21,26 +21,28 @@ var dataSource = new ViewPager.DataSource({
 
 class Calendar extends React.Component {
   render() {
-    const targetMonth = moment(this.props.monthToDisplay, Constants.MONTH_FORMAT)
-    const prevMonth = moment(targetMonth).subtract(1, 'months')
-    const nextMonth = moment(targetMonth).add(1, 'months')
-    const monthsToRender = [prevMonth,targetMonth,nextMonth]
+    let monthsToRender = []
+    for(let i = -12; i <= 12; i ++){
+      monthsToRender.push(i)
+    }
+
     console.log(`calendar render method called with monthsToRender:${monthsToRender}`)
     return <ViewPager ref='viewPager' style= {[ styles.viewPager,this.props.style]}
       dataSource = {dataSource.cloneWithPages(monthsToRender)}
       renderPage = {this.renderSingleMonthCalendar.bind(this)}
       onChangePage = {
         pageNum => {
-          console.log(`page changed: ${pageNum} monthsToRender: ${monthsToRender}`)
-          this.props.monthChanged(monthsToRender[pageNum - 1].format(Constants.MONTH_FORMAT))
+          console.log(`page changed: ${pageNum}`)
+          // this.props.monthChanged(monthsToRender[pageNum - 1].format(Constants.MONTH_FORMAT))
         }
       }
       renderPageIndicator = {false}
-      initialPage = {2}
+      initialPage = {12}
       />
   }
 
-  renderSingleMonthCalendar(baseDate, page){
+  renderSingleMonthCalendar(offset, page){
+    let baseDate = moment().add(offset, 'months')
     const numberOfDays = moment(baseDate).endOf('month').date()
     const dayOfWeekOn1st = baseDate.startOf('month').day()
     // console.log(`numberOfDays ${numberOfDays} dayOfWeekOn1st ${dayOfWeekOn1st}`)
@@ -82,7 +84,7 @@ class Calendar extends React.Component {
   }
 
   showCurrentMonth(){
-    this.refs.viewPager.goToPage(2)
+    this.refs.viewPager.goToPage(13)
   }
 
   selectDate(date) {
@@ -108,8 +110,6 @@ class Calendar extends React.Component {
 }
 
 Calendar.propTypes = {
-  // in 'YYYY MM'
-  monthToDisplay: React.PropTypes.string,
   selectedDate: React.PropTypes.string,
   dateSelected: React.PropTypes.func,
   eventDates: React.PropTypes.arrayOf(React.PropTypes.string)
@@ -118,7 +118,6 @@ Calendar.propTypes = {
 Calendar.defaultProps = {
   eventDates: [],
   selectedDate: moment().format(Constants.DATE_FORMAT),
-  monthToDisplay: moment().format(Constants.MONTH_FORMAT),
   monthChanged: () => {}
 }
 
