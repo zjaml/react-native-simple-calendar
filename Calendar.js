@@ -84,7 +84,7 @@ class Calendar extends React.Component {
   }
 
   showCurrentMonth(){
-    this.refs.viewPager.goToPage(13)
+    this.refs.viewPager.goToPage(12)
   }
 
   selectDate(date) {
