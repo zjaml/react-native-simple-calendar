@@ -13,31 +13,30 @@ import ViewPager from 'react-native-viewpager'
 const {width} = Dimensions.get('window')
 
 var dataSource = new ViewPager.DataSource({
-  pageHasChanged: (p1, p2) => {
-    console.log(`p1: ${p1} p2: ${p2}`)
-    return p1 !== p2
-  }
+  pageHasChanged: (p1, p2) => p1 !== p2
 })
+
+const START_OFFSET = -12
+const END_OFFSET = 12
 
 class Calendar extends React.Component {
   render() {
     let monthsToRender = []
-    for(let i = -12; i <= 12; i ++){
+    for(let i = START_OFFSET; i <= END_OFFSET; i ++){
       monthsToRender.push(i)
     }
-
-    console.log(`calendar render method called with monthsToRender:${monthsToRender}`)
-    return <ViewPager ref='viewPager' style= {[ styles.viewPager,this.props.style]}
+    return <ViewPager ref='viewPager' style= {[styles.viewPager,this.props.style]}
       dataSource = {dataSource.cloneWithPages(monthsToRender)}
       renderPage = {this.renderSingleMonthCalendar.bind(this)}
       onChangePage = {
         pageNum => {
-          console.log(`page changed: ${pageNum}`)
-          // this.props.monthChanged(monthsToRender[pageNum - 1].format(Constants.MONTH_FORMAT))
+          this.props.monthChanged &&
+          this.props.monthChanged(
+            moment().add(pageNum - 1 + START_OFFSET).format(Constants.MONTH_FORMAT))
         }
       }
       renderPageIndicator = {false}
-      initialPage = {12}
+      initialPage = {0 - START_OFFSET}
       />
   }
 
@@ -112,13 +111,13 @@ class Calendar extends React.Component {
 Calendar.propTypes = {
   selectedDate: React.PropTypes.string,
   dateSelected: React.PropTypes.func,
-  eventDates: React.PropTypes.arrayOf(React.PropTypes.string)
+  eventDates: React.PropTypes.arrayOf(React.PropTypes.string),
+  monthChanged: React.PropTypes.func
 }
 
 Calendar.defaultProps = {
   eventDates: [],
-  selectedDate: moment().format(Constants.DATE_FORMAT),
-  monthChanged: () => {}
+  selectedDate: moment().format(Constants.DATE_FORMAT)
 }
 
 var DateView = ({text, onPress, selected, hasEvent, isToday}) =>{
